@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- sale.change_line_quantity -->
+        <record model="ir.ui.view" id="recompute_price_start_view_form">
+            <field name="model">sale.recompute_price.start</field>
+            <field name="name">recompute_price_start_form</field>
+            <field name="inherit"
+                ref="sale_recompute_price.recompute_price_start_view_form"/>
+        </record>
+
+    </data>
+</tryton>
