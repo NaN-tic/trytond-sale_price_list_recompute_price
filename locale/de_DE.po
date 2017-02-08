@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:sale.recompute_price.start,price_list:"
+msgid "Price List"
+msgstr "Preisliste"
+
+msgctxt "selection:sale.recompute_price.start,method:"
+msgid "Update Price List"
+msgstr "Preisliste"
