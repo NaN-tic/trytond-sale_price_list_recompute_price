@@ -8,14 +8,15 @@ from trytond.tests.test_tryton import doctest_setup, doctest_teardown
 from trytond.tests.test_tryton import doctest_checker
 
 
-class TestCase(ModuleTestCase):
+class SalePriceListRecomputePriceTestCase(ModuleTestCase):
     'Test module'
     module = 'sale_price_list_recompute_price'
 
 
 def suite():
     suite = trytond.tests.test_tryton.suite()
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCase))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
+        SalePriceListRecomputePriceTestCase))
     suite.addTests(doctest.DocFileSuite(
             'scenario_sale_price_list_recompute_price.rst',
             setUp=doctest_setup, tearDown=doctest_teardown, encoding='utf-8',

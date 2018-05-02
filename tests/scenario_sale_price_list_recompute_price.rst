@@ -8,26 +8,19 @@ Imports::
     >>> from dateutil.relativedelta import relativedelta
     >>> from decimal import Decimal
     >>> from proteus import config, Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
     >>> from trytond.modules.company.tests.tools import create_company, \
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
-    ...     create_chart, get_accounts, create_tax, set_tax_code
+    ...     create_chart, get_accounts, create_tax
     >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences, create_payment_term
     >>> today = datetime.date.today()
 
-Create database::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
+Install sale_price_list_recompute_price::
 
-Install sale::
-
-    >>> Module = Model.get('ir.module')
-    >>> module, = Module.find([
-    ...     ('name', '=', 'sale_price_list_recompute_price')])
-    >>> module.click('install')
-    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('sale_price_list_recompute_price')
 
 Create company::
 
@@ -84,12 +77,12 @@ Create product::
     >>> template.purchasable = True
     >>> template.salable = True
     >>> template.list_price = Decimal('10')
-    >>> template.cost_price = Decimal('5')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> product.template = template
+    >>> product.cost_price = Decimal('5')
     >>> product.save()
 
     >>> service = Product()
@@ -99,12 +92,12 @@ Create product::
     >>> template.type = 'service'
     >>> template.salable = True
     >>> template.list_price = Decimal('100')
-    >>> template.cost_price = Decimal('20')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> service.template = template
+    >>> service.cost_price = Decimal('20')
     >>> service.save()
 
 Create payment term::

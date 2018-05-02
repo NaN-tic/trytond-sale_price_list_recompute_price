@@ -8,11 +8,11 @@ from trytond.pyson import Eval
 from trytond.transaction import Transaction
 
 __all__ = ['Sale', 'RecomputePriceStart', 'RecomputePrice']
-__metaclass__ = PoolMeta
 
 
 class Sale:
     __name__ = 'sale.sale'
+    __metaclass__ = PoolMeta
 
     def _recompute_price_list_price(self, line):
         pool = Pool()
@@ -55,6 +55,7 @@ class Sale:
 
 class RecomputePriceStart:
     __name__ = 'sale.recompute_price.start'
+    __metaclass__ = PoolMeta
 
     price_list = fields.Many2One('product.price_list', 'Price List',
         states={
@@ -72,6 +73,7 @@ class RecomputePriceStart:
 
 class RecomputePrice:
     __name__ = 'sale.recompute_price'
+    __metaclass__ = PoolMeta
 
     def default_start(self, fields):
         pool = Pool()
