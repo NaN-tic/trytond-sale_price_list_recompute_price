@@ -8,4 +8,4 @@ msgstr "Preisliste"
 
 msgctxt "selection:sale.recompute_price.start,method:"
 msgid "Update Price List"
-msgstr "Preisliste"
+msgstr "Preisliste aktualisieren"
