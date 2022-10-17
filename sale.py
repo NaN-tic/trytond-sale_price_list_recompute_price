@@ -1,11 +1,11 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from decimal import Decimal
-
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 from trytond.transaction import Transaction
+from trytond.modules.product import round_price
 
 __all__ = ['Sale', 'RecomputePriceStart', 'RecomputePrice']
 
@@ -21,17 +21,13 @@ class Sale(metaclass=PoolMeta):
             unit_price = Product.get_sale_price([line.product],
                     line.quantity or 0)[line.product.id]
             if unit_price:
-                values['unit_price'] = unit_price.quantize(
-                    Decimal(1) / 10 ** line.__class__.unit_price.digits[1])
+                values['unit_price'] = round_price(unit_price)
                 if hasattr(line, 'gross_unit_price'):
-                    digits = line.__class__.gross_unit_price.digits[1]
                     if line.discount:
-                        gross_unit_price = (unit_price *
-                            (Decimal(1) + line.discount)).quantize(
-                            Decimal(str(10 ** -digits)))
+                        gross_unit_price = round_price(unit_price *
+                            (Decimal(1) + line.discount))
                     else:
-                        gross_unit_price = (unit_price).quantize(
-                            Decimal(str(10 ** -digits)))
+                        gross_unit_price = round_price(unit_price)
                     values['gross_unit_price'] = gross_unit_price
         return values
 
