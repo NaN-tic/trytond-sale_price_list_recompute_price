@@ -112,11 +112,11 @@ Create payment term::
 Create a price list::
 
     >>> PriceList = Model.get('product.price_list')
-    >>> default_price_list = PriceList(name='Default')
+    >>> default_price_list = PriceList(name='Default', price='list_price')
     >>> line = default_price_list.lines.new()
     >>> line.formula = 'unit_price * 1.2'
     >>> default_price_list.save()
-    >>> reduced_price_list = PriceList(name='Reduced')
+    >>> reduced_price_list = PriceList(name='Reduced', price='list_price')
     >>> line = reduced_price_list.lines.new()
     >>> line.formula = 'unit_price * 0.8'
     >>> reduced_price_list.save()
