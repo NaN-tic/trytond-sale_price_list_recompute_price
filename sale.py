@@ -54,8 +54,7 @@ class RecomputePriceStart(metaclass=PoolMeta):
     price_list = fields.Many2One('product.price_list', 'Price List',
         states={
             'invisible': Eval('method') != 'price_list',
-            },
-        depends=['method'])
+            })
 
     @classmethod
     def __setup__(cls):
