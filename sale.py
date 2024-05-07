@@ -28,7 +28,7 @@ class Sale(metaclass=PoolMeta):
                                 unit_price * (Decimal(1) - line.discount))
                         unit_price = unit_price_discount
                     values['gross_unit_price'] = gross_unit_price
-                values['unit_price'] = unit_price
+            values['unit_price'] = round_price(unit_price)
 
         return values
 
