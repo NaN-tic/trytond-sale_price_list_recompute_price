@@ -7,8 +7,13 @@ from . import sale
 def register():
     Pool.register(
         sale.Sale,
+        sale.SaleLine,
         sale.RecomputePriceStart,
         module='sale_price_list_recompute_price', type_='model')
     Pool.register(
         sale.RecomputePrice,
         module='sale_price_list_recompute_price', type_='wizard')
+    Pool.register(
+        sale.SaleLineDiscount,
+        module='sale_price_list_recompute_price', type_='model',
+        depends=['sale_discount'])

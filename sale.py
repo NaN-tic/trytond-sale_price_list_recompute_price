@@ -1,52 +1,38 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from decimal import Decimal
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 from trytond.transaction import Transaction
-from trytond.modules.product import round_price
-
-__all__ = ['Sale', 'RecomputePriceStart', 'RecomputePrice']
 
 
 class Sale(metaclass=PoolMeta):
     __name__ = 'sale.sale'
 
-    def _recompute_price_list_price(self, line):
-        pool = Pool()
-        Product = pool.get('product.product')
-        values = {}
-        with Transaction().set_context(line._get_context_sale_price()):
-            unit_price = Product.get_sale_price([line.product],
-                    line.quantity or 0)[line.product.id]
-            if unit_price:
-                if hasattr(line, 'gross_unit_price'):
-                    gross_unit_price = round_price(unit_price)
-                    if line.discount:
-                        unit_price_discount = (
-                                unit_price * (Decimal(1) - line.discount))
-                        unit_price = unit_price_discount
-                    values['gross_unit_price'] = gross_unit_price
-            values['unit_price'] = round_price(unit_price or Decimal(0))
-
-        return values
-
     @classmethod
     def recompute_price_by_price_list(cls, sales, price_list):
         pool = Pool()
         SaleLine = pool.get('sale.line')
-        to_write = []
+
         cls.write(sales, {'price_list': price_list.id if price_list else None})
+
+        to_save = []
         for sale in sales:
-                for line in sale.lines:
-                    if line.type != 'line':
-                        continue
-                    new_values = sale._recompute_price_list_price(line)
-                    if new_values:
-                        to_write.extend(([line], new_values))
-        if to_write:
-            SaleLine.write(*to_write)
+            for line in sale.lines:
+                if line.type != 'line':
+                    continue
+                line._recompute_price_list_price()
+                to_save.append(line)
+        if to_save:
+            SaleLine.save(to_save)
+
+
+class SaleLine(metaclass=PoolMeta):
+    __name__ = 'sale.line'
+
+    @fields.depends('unit_price', methods=['compute_unit_price'])
+    def _recompute_price_list_price(self):
+        self.unit_price = self.compute_unit_price()
 
 
 class RecomputePriceStart(metaclass=PoolMeta):
@@ -71,6 +57,7 @@ class RecomputePrice(metaclass=PoolMeta):
     def default_start(self, fields):
         pool = Pool()
         Sale = pool.get('sale.sale')
+
         default = super(RecomputePrice, self).default_start(fields)
         if len(Transaction().context['active_ids']) == 1:
             sale = Sale(Transaction().context['active_id'])
@@ -82,3 +69,16 @@ class RecomputePrice(metaclass=PoolMeta):
         return {
             'price_list': self.start.price_list,
             }
+
+
+class SaleLineDiscount(metaclass=PoolMeta):
+    __name__ = 'sale.line'
+
+    @fields.depends('discount_rate', 'discount_amount')
+    def _recompute_price_list_price(self):
+        super()._recompute_price_list_price()
+        self.base_price = self.unit_price
+        if self.discount_rate is not None:
+            self.on_change_discount_rate()
+        elif self.discount_amount is not None:
+            self.on_change_discount_amount()
