@@ -20,15 +20,16 @@ class Sale(metaclass=PoolMeta):
         with Transaction().set_context(line._get_context_sale_price()):
             unit_price = Product.get_sale_price([line.product],
                     line.quantity or 0)[line.product.id]
-            if unit_price:
-                if hasattr(line, 'gross_unit_price'):
-                    gross_unit_price = round_price(unit_price)
-                    if line.discount:
-                        unit_price_discount = (
-                                unit_price * (Decimal(1) - line.discount))
-                        unit_price = unit_price_discount
-                    values['gross_unit_price'] = gross_unit_price
-            values['unit_price'] = round_price(unit_price or Decimal(0))
+            if not unit_price:
+                unit_price = Decimal(0)
+            if hasattr(line, 'gross_unit_price'):
+                gross_unit_price = round_price(unit_price)
+                if line.discount:
+                    unit_price_discount = (
+                            unit_price * (Decimal(1) - line.discount))
+                    unit_price = unit_price_discount
+                values['gross_unit_price'] = gross_unit_price
+            values['unit_price'] = round_price(unit_price)
 
         return values
 
