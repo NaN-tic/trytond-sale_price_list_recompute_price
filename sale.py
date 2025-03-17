@@ -20,7 +20,7 @@ class Sale(metaclass=PoolMeta):
         with Transaction().set_context(line._get_context_sale_price()):
             unit_price = Product.get_sale_price([line.product],
                     line.quantity or 0)[line.product.id]
-            if unit_price:
+            if unit_price is not None:
                 if hasattr(line, 'gross_unit_price'):
                     gross_unit_price = round_price(unit_price)
                     if line.discount:
