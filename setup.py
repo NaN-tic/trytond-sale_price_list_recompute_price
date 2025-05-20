@@ -9,9 +9,7 @@ from configparser import ConfigParser
 
 MODULE = 'sale_price_list_recompute_price'
 PREFIX = 'nantic'
-MODULE2PREFIX = {
-    'sale_recompute_price': 'nantic',
-    }
+MODULE2PREFIX = {}
 
 
 def read(fname):
@@ -58,14 +56,7 @@ if minor_version % 2:
 else:
     branch = series
 
-dependency_links = [
-    ('hg+https://bitbucket.org/nantic/'
-        'trytond-sale_recompute_price@%(branch)s'
-        '#egg=nantic-sale_recompute_price-%(series)s' % {
-            'branch': branch,
-            'series': series,
-            }),
-    ]
+dependency_links = []
 
 if minor_version % 2:
     # Add development index for testing with proteus
@@ -86,7 +77,7 @@ setup(name='%s_%s' % (PREFIX, MODULE),
         ],
     package_data={
         'trytond.modules.%s' % MODULE: (info.get('xml', [])
-            + ['tryton.cfg', 'view/*.xml', 'locale/*.po', 'tests/*.rst']),
+            + ['tryton.cfg', 'locale/*.po', 'tests/*.rst']),
         },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
