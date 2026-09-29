@@ -3,7 +3,7 @@
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
-from trytond.transaction import Transaction
+from trytond.transaction import Transaction, without_check_access
 
 
 class Sale(metaclass=PoolMeta):
@@ -14,7 +14,9 @@ class Sale(metaclass=PoolMeta):
         pool = Pool()
         SaleLine = pool.get('sale.line')
 
-        cls.write(sales, {'price_list': price_list.id if price_list else None})
+        with without_check_access():
+            cls.write(
+                sales, {'price_list': price_list.id if price_list else None})
 
         to_save = []
         for sale in sales:
@@ -24,7 +26,8 @@ class Sale(metaclass=PoolMeta):
                 line._recompute_price_list_price()
                 to_save.append(line)
         if to_save:
-            SaleLine.save(to_save)
+            with without_check_access():
+                SaleLine.save(to_save)
 
 
 class SaleLine(metaclass=PoolMeta):
